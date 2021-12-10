@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Api.Requests;
 using Sample.Commands.Products.Add;
@@ -33,30 +34,32 @@ namespace Sample.Api.Controllers
 
         [HttpGet("{id}")]
         [Produces(typeof(IEnumerable<Product>))]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Get(Guid id)
         {
             var query = new GetProductQuery(id);
             return Ok(await _mediator.Send(query));
         }
 
-        // POST api/<ProductController>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<IActionResult> Create([FromBody] AddProductRequest request)
         {
             var id = await _mediator.Send(new AddProductCommand(request.Name));
             return Created($"api/products/{id}", id);
         }
 
-        // PUT api/<ProductController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(Guid id, AddProductRequest request)
         {
+            //TODO
         }
 
         // DELETE api/<ProductController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void Delete(Guid id)
         {
+            //TODO
         }
     }
 }
