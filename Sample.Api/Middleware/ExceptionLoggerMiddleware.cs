@@ -44,7 +44,9 @@ namespace Sample.Api.Middleware
             context.Response.ContentType = "application/json";
 
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-            var errorModel = new {Code = "RandomCode", Message = domainException.Message};
+
+            //Code can(should) be correlated with specific domain exception
+            var errorModel = new { Code = domainException.Code, Message = domainException.Message };
             await context.Response.WriteAsync(JsonConvert.SerializeObject(errorModel));
         }
     }
