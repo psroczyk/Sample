@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Sample.Api.Requests;
+using Sample.Commands.Products.Add;
 using Sample.Domain.Product;
 using Sample.Queries.Products.Get;
 using Sample.Queries.Products.GetAll;
@@ -32,16 +33,18 @@ namespace Sample.Api.Controllers
 
         [HttpGet("{id}")]
         [Produces(typeof(IEnumerable<Product>))]
-        public async Task<IActionResult> Get(GetProductRequest request)
+        public async Task<IActionResult> Get(Guid id)
         {
-            var query = new GetProductQuery(request.Id.Value);
+            var query = new GetProductQuery(id);
             return Ok(await _mediator.Send(query));
         }
 
         // POST api/<ProductController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Create([FromBody] AddProductRequest request)
         {
+            var id = await _mediator.Send(new AddProductCommand(request.Name));
+            return Created($"api/products/{id}", id);
         }
 
         // PUT api/<ProductController>/5

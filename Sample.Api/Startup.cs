@@ -40,6 +40,11 @@ namespace Sample.Api
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
 
+            //accept: application/xml
+            services.AddMvc()
+                .AddXmlDataContractSerializerFormatters()
+                .AddXmlSerializerFormatters();
+
             services.AddSwaggerGen();
         }
 
