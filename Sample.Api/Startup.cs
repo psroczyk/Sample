@@ -7,6 +7,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using Sample.Commands;
+using Sample.Persistence;
+using Sample.Queries;
 
 namespace Sample.Api
 {
@@ -19,9 +24,13 @@ namespace Sample.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.RegisterPersistenceServices();
+            services
+                .AddCommands()
+                .AddQueries();
+
             services.AddSwaggerGen();
             services
                 .AddControllers()
@@ -34,13 +43,10 @@ namespace Sample.Api
             services.AddSwaggerGen();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            app.UseExceptionHandlerMiddleware();
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
             app.UseSwaggerUI();
             app.UseRouting();
 

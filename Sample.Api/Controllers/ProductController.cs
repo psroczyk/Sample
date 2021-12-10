@@ -1,5 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Sample.Api.Requests;
+using Sample.Domain.Product;
+using Sample.Queries.Products.Get;
+using Sample.Queries.Products.GetAll;
 
 namespace Sample.Api.Controllers
 {
@@ -7,18 +15,27 @@ namespace Sample.Api.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        // GET: api/<ProductController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IMediator _mediator;
+
+        public ProductController(IMediator mediator)
         {
-            return new string[] { "value1", "value2" };
+            _mediator = mediator;
         }
 
-        // GET api/<ProductController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet]
+        [Produces(typeof(IEnumerable<Product>))]
+        public async Task<IActionResult> Get()
         {
-            return "value";
+            var products = await _mediator.Send(new GetAllProductQuery());
+            return Ok(products);
+        }
+
+        [HttpGet("{id}")]
+        [Produces(typeof(IEnumerable<Product>))]
+        public async Task<IActionResult> Get(GetProductRequest request)
+        {
+            var query = new GetProductQuery(request.Id.Value);
+            return Ok(await _mediator.Send(query));
         }
 
         // POST api/<ProductController>

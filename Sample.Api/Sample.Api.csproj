@@ -5,9 +5,15 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.12" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.21" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Sample.Commands\Sample.Commands.csproj" />
+	  <ProjectReference Include="..\Sample.Persistence\Sample.Persistence.csproj" />
+	  <ProjectReference Include="..\Sample.Queries\Sample.Queries.csproj" />
 	</ItemGroup>
 
 </Project>
