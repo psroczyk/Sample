@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Sample.Api.Requests;
 using Sample.Commands.Products.Add;
 using Sample.Domain.Product;
 using Sample.Queries.Products.Get;
@@ -15,20 +13,18 @@ namespace Sample.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProductController : ControllerBase
+    public class ProductController : BaseController
     {
-        private readonly IMediator _mediator;
 
-        public ProductController(IMediator mediator)
+        public ProductController(IMediator mediator):base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
         [Produces(typeof(IEnumerable<Product>))]
         public async Task<IActionResult> Get()
         {
-            var products = await _mediator.Send(new GetAllProductQuery());
+            var products = await Mediator.Send(new GetAllProductQuery());
             return Ok(products);
         }
 
@@ -38,19 +34,21 @@ namespace Sample.Api.Controllers
         public async Task<IActionResult> Get(Guid id)
         {
             var query = new GetProductQuery(id);
-            return Ok(await _mediator.Send(query));
+            return Ok(await Mediator.Send(query));
         }
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<IActionResult> Create([FromBody] AddProductRequest request)
+        public async Task<IActionResult> Create([FromBody] AddProductCommand command)
         {
-            var id = await _mediator.Send(new AddProductCommand(request.Name));
-            return Created($"api/products/{id}", id);
+            //TODO: Depending on needs, validation can be done either only by Domain object or we can use MediatR pipeline
+            CheckIfNull(command);
+            var id = await Mediator.Send(command);
+            return Created($"api/product/{id}", id);
         }
 
         [HttpPut("{id}")]
-        public void Put(Guid id, AddProductRequest request)
+        public void Put(Guid id, AddProductCommand command)
         {
             //TODO
         }

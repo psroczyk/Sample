@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Converters;
@@ -28,12 +29,20 @@ namespace Sample.Api
 
             services.AddSwaggerGen();
             services
-                .AddControllers()
+                .AddControllers(options =>
+                {
+                    options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true; //For DomainException handling
+                })
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                 });
+
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
 
             //accept: application/xml
             services.AddMvc()
