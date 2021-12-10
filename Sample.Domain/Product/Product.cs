@@ -8,7 +8,6 @@ namespace Sample.Domain.Product
     {
         public string Name { get; private set; }
 
-
         public static Product Create(string name)
         {
             if (string.IsNullOrEmpty(name))
